@@ -42,13 +42,37 @@ Inherited workflows currently in `.github/workflows/`:
    "I understand my workflows, go ahead and enable them". The GitHub API
    does not expose this toggle.
 
-## Observed state at the time of writing
+## Initial pre-activation state
 
 - `gh api repos/sora-grayscale/karavault/actions/permissions` reports
   Actions enabled.
 - `gh api repos/sora-grayscale/karavault/actions/workflows` reports zero
-  workflows, even though the files exist on `main`. This is the gap #13 is
-  intended to close.
+  workflows, even though the files exist on `main`. This was the gap #13
+  is intended to close.
+
+## Verified after activation
+
+After the one-time UI activation on 2026-05-19, the gap closed:
+
+- `gh api repos/sora-grayscale/karavault/actions/workflows` now reports
+  `total_count: 9` with all inherited workflows in `state: "active"`.
+- An empty re-trigger commit on PR #20 triggered CI run
+  https://github.com/sora-grayscale/karavault/actions/runs/26081008839
+  (event `pull_request`, conclusion `success`).
+- All five PR check contexts passed:
+
+  | check                | duration |
+  |----------------------|----------|
+  | `CI / lint`          | 2m12s    |
+  | `CI / format`        | 2m28s    |
+  | `CI / open-api-spec` | 2m18s    |
+  | `CI / typecheck`     | 4m05s    |
+  | `CI / tests`         | 10m50s   |
+
+  These are the CI jobs that #12 should connect as required status checks
+  on `main`; GitHub may display them either as job names (`lint`, `format`,
+  ...) or as workflow-qualified check names (`CI / lint`, `CI / format`,
+  ...).
 
 ## Follow-up
 
